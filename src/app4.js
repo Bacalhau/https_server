@@ -1,6 +1,6 @@
 //openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout privatekey.key -out certificate.crt
-const https = require('https');
-const fs = require('fs');
+var https = require('https');
+var fs = require('fs');
 var mysql = require("mysql");
 var colors = require('colors/safe');
 var program = require('commander');
@@ -10,7 +10,7 @@ var program = require('commander');
 var enable_console = false;
 var server_port = 8000;
 
-const mysqlOption = {
+var mysqlOption = {
 
 			host: "localhost",
 			port:"3306",
@@ -20,6 +20,7 @@ const mysqlOption = {
 };
 
 const options = {
+
   key: fs.readFileSync('privatekey.key'),
   cert: fs.readFileSync('certificate.crt')
   
@@ -82,7 +83,6 @@ if (program.mysqldatabase){
 	mysqlOption.database = program.mysqldatabase;
 	console.log(colors.cyan(" - MySQL server database: ") + mysqlOption.database);
 }
-
 
 console.log(" ");
 console.log(colors.bgYellow("-------------------------------"));
