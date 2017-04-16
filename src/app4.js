@@ -29,11 +29,11 @@ program
   .version('0.0.1')
   .option('-l, --log', 'Activate the log of actions on console.')
   .option('-p, --port [type]', 'Select port of HTTPS server [8000].', '8000')
-  .option('-ma, --mysqladress [type]', 'Adress of the MySQL server [localhost].', 'localhost')
-  .option('-mp, --mysqlport [type]', 'Port of the MySQL server [3306].', '3306')
-  .option('-mu, --mysqluser [type]', 'User of the MySQL server [node].', 'node')
-  .option('-mk, --mysqlpassword [type]', 'Password of the MySQL server [nodeaccess].', 'nodeaccess')
-  .option('-md, --mysqldatabase [type]', 'Database of the MySQL server [project].', 'project')
+  .option('-a, --mysqladress [type]', 'Adress of the MySQL server [localhost].', 'localhost')
+  .option('-t, --mysqlport [type]', 'Port of the MySQL server [3306].', '3306')
+  .option('-u, --mysqluser [type]', 'User of the MySQL server [node].', 'node')
+  .option('-k, --mysqlpassword [type]', 'Password of the MySQL server [nodeaccess].', 'nodeaccess')
+  .option('-d, --mysqldatabase [type]', 'Database of the MySQL server [project].', 'project')
   .parse(process.argv);
  
 
