@@ -164,40 +164,30 @@ https.createServer(options, (request, response) => {
 			
 			request.on('error', function(err) {
 
-			consoleLogError("HTTP",err);
-			console.error(err);
+				consoleLogError("HTTP",err);
+				console.error(err);
 
 			}).on('data', function(chunk) {
 
-			body.push(chunk);
+				body.push(chunk);
 
 			}).on('end', function() {
 
-			body = Buffer.concat(body).toString();
+				body = Buffer.concat(body).toString();
 
-			var parsed = JSON.parse(body);
-			//console.log(parsed);	
+				var parsed = JSON.parse(body);
+				//console.log(parsed);	
 
 			
-			var con = mysql.createConnection(mysqlOption);// First you need to create a connection to the db
+				var con = mysql.createConnection(mysqlOption);// First you need to create a connection to the db
 
-			con.connect(function(err) {
-			  if (err) {
-			    console.error('error connecting: ' + err.stack);
-			    return;
-			  }
+				con.connect(function(err) {
+			  		if (err) {
+			   			console.error('error connecting: ' + err.stack);
+			    		return;
+			  		}
+				});
 
-			  //console.log('connected as id ' + con.threadId);
-			});
-
-			 
-
-			  //var post  = {description: "Envio app Node", init_date: "2017-12-04",end_date: "2017-12-04",status:1};
-
-			  //var query = con.query("INSERT INTO tasks SET ?", post, function (error, results, fields) {
-			  //if (error) throw error;
-			  // Neat!
-			  //});
 			  var query = con.query("INSERT INTO tasks SET description = ? , init_date = ? , end_date = ? , status = ? ", [parsed.description, parsed.init_date, parsed.end_date,parsed.status], function (error, results, fields) {
 			  if (error) throw error;
 			  // Neat!
