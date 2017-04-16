@@ -4,42 +4,82 @@ var fs = require('fs');
 var mysql = require("mysql");
 var colors = require('colors/safe');
 var program = require('commander');
+const os = require('os');
+var cpu_data = os.cpus();
 
+function getDateTime() {
+
+    var date = new Date();
+
+    var hour = date.getHours();
+    hour = (hour < 10 ? "0" : "") + hour;
+
+    var min  = date.getMinutes();
+    min = (min < 10 ? "0" : "") + min;
+
+    var sec  = date.getSeconds();
+    sec = (sec < 10 ? "0" : "") + sec;
+
+    var year = date.getFullYear();
+
+    var month = date.getMonth() + 1;
+    month = (month < 10 ? "0" : "") + month;
+
+    var day  = date.getDate();
+    day = (day < 10 ? "0" : "") + day;
+
+    
+	return  hour + ":" + min + ":" + sec + " - " + day + "/" + month + "/" + year;
+
+}
+
+var config_file = JSON.parse(fs.readFileSync('config.cfg','utf8'));
 
 //READ EXECUTION OPTIONS AND SET VARIABLES
-var enable_console = false;
-var server_port = 8000;
+var enable_console = config_file.miscellaneous.enable_console;
+var server_port = config_file.httpsconfig.port;
 
 var mysqlOption = {
 
-			host: "localhost",
-			port:"3306",
-			user: "node",
-			password: "nodeaccess",
-			database:"project"
+			host: config_file.mysqlconfig.host,
+			port: config_file.mysqlconfig.port,
+			user: config_file.mysqlconfig.user,
+			password: config_file.mysqlconfig.password,
+			database: config_file.mysqlconfig.database
 };
 
 const options = {
 
-  key: fs.readFileSync('privatekey.key'),
-  cert: fs.readFileSync('certificate.crt')
+  key: fs.readFileSync(config_file.httpsconfig.priv_key),
+  cert: fs.readFileSync(config_file.httpsconfig.certificate)
   
 };
 
 program
   .version('0.0.1')
   .option('-l, --log', 'Activate the log of actions on console.')
-  .option('-p, --port [type]', 'Select port of HTTPS server [8000].', '8000')
-  .option('-a, --mysqladress [type]', 'Adress of the MySQL server [localhost].', 'localhost')
-  .option('-t, --mysqlport [type]', 'Port of the MySQL server [3306].', '3306')
-  .option('-u, --mysqluser [type]', 'User of the MySQL server [node].', 'node')
-  .option('-k, --mysqlpassword [type]', 'Password of the MySQL server [nodeaccess].', 'nodeaccess')
-  .option('-d, --mysqldatabase [type]', 'Database of the MySQL server [project].', 'project')
+  .option('-p, --port [type]', 'Select port of HTTPS server [' + config_file.httpsconfig.port +'].', config_file.httpsconfig.port)
+  .option('-a, --mysqladress [type]', 'Adress of the MySQL server ['+ config_file.mysqlconfig.host + '].', config_file.mysqlconfig.host)
+  .option('-t, --mysqlport [type]', 'Port of the MySQL server ['+ config_file.mysqlconfig.port +'].', config_file.mysqlconfig.port)
+  .option('-u, --mysqluser [type]', 'User of the MySQL server ['+ config_file.mysqlconfig.user +'].', config_file.mysqlconfig.user)
+  .option('-k, --mysqlpassword [type]', 'Password of the MySQL server ['+ config_file.mysqlconfig.password +'].', config_file.mysqlconfig.password)
+  .option('-d, --mysqldatabase [type]', 'Database of the MySQL server ['+ config_file.mysqlconfig.database +'].', config_file.mysqlconfig.database)
   .parse(process.argv);
  
 
 console.log(colors.bgYellow("--------HTTPS SERVER-----------"));
 console.log(" ");
+console.log(colors.cyan("STARTUP: ") + getDateTime());
+console.log(" ");
+console.log(colors.cyan("CPU: " + cpu_data[0].model + " CLOCK: " + cpu_data[0].speed + "(MHz) NUMBER OF CORES: "+ (cpu_data.length)));
+console.log(colors.cyan("FREE RAM: " + (os.freemem()/(1024*1024*1024)).toFixed(2) + " GB"));
+console.log(colors.cyan("TOTAL RAM: " + (os.totalmem()/(1024*1024*1024)).toFixed(2) +" GB"));
+console.log(colors.cyan("HOST NAME: " + os.hostname()));
+console.log(colors.cyan("PLATFORM: " + os.platform() + " OS: " + os.type() + " RELEASE: " + os.release()));
+console.log(" ");
+console.log(colors.cyan("Parameters: "));
+console.log(" ");
+
 if (program.log){
 
 	console.log(colors.cyan(" - Server log active"));
@@ -136,7 +176,7 @@ https.createServer(options, (request, response) => {
 			body = Buffer.concat(body).toString();
 
 			var parsed = JSON.parse(body);
-			console.log(parsed);	
+			//console.log(parsed);	
 
 			
 			var con = mysql.createConnection(mysqlOption);// First you need to create a connection to the db
@@ -147,7 +187,7 @@ https.createServer(options, (request, response) => {
 			    return;
 			  }
 
-			  console.log('connected as id ' + con.threadId);
+			  //console.log('connected as id ' + con.threadId);
 			});
 
 			 
