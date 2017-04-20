@@ -7,6 +7,7 @@ var colors = require('colors/safe');
 var program = require('commander');
 const nodemailer = require('nodemailer');
 const os = require('os');
+var schedule = require('node-schedule');
 var cpu_data = os.cpus();
 
 function getDateTime_email() {
@@ -307,3 +308,67 @@ https.createServer(options, (request, response) => {
     }
 
 }).listen(server_port);
+
+
+
+//---------------SCHEDULE---------------//
+
+var rule_9 = new schedule.RecurrenceRule();
+rule_9.hour = 9;
+
+var rule_21 = new schedule.RecurrenceRule();
+rule_21.hour = 21;
+
+var schedule_9 = schedule.scheduleJob(rule_9, function(){
+
+            consoleMailSent(enable_console);
+            statistics.get = statistics.get+ 1;
+            statistics.total = statistics.post + statistics.other + statistics.get;
+            email_subject =  getDateTime_email();
+            let email_body =  "Total number of requests: "+ statistics.total +"\nPOSTS: "+ statistics.post+"\nGETS: "+ statistics.get +"\nOTHER: "+ statistics.other +"\nRunning since: "+ statistics.startup;
+            // setup email data with unicode symbols
+            let mailOptions = {
+                from: '"Server Status" <mynodeservermail@gmail.com>', // sender address
+                to: 'joaomarcusbacalhau@hotmail.com', // list of receivers
+                subject: email_subject, // Subject line
+                text: email_body, // plain text body
+            };
+
+            // send mail with defined transport object
+            transporter.sendMail(mailOptions, (error, info) => {
+                if (error) {
+                    consoleLogError(enable_console,"SMTP"," Sendmail Error");
+                }
+                if((info.rejected.length==0)&&(info.response.slice(0,3)==250)){
+                    consoleMailSent(enable_console);                                       
+                }                    
+            });
+  
+});
+
+var schedule_21 = schedule.scheduleJob(rule_21, function(){
+
+            consoleMailSent(enable_console);
+            statistics.get = statistics.get+ 1;
+            statistics.total = statistics.post + statistics.other + statistics.get;
+            email_subject =  getDateTime_email();
+            let email_body =  "Total number of requests: "+ statistics.total +"\nPOSTS: "+ statistics.post+"\nGETS: "+ statistics.get +"\nOTHER: "+ statistics.other +"\nRunning since: "+ statistics.startup;
+            // setup email data with unicode symbols
+            let mailOptions = {
+                from: '"Server Status" <mynodeservermail@gmail.com>', // sender address
+                to: 'joaomarcusbacalhau@hotmail.com', // list of receivers
+                subject: email_subject, // Subject line
+                text: email_body, // plain text body
+            };
+
+            // send mail with defined transport object
+            transporter.sendMail(mailOptions, (error, info) => {
+                if (error) {
+                    consoleLogError(enable_console,"SMTP"," Sendmail Error");
+                }
+                if((info.rejected.length==0)&&(info.response.slice(0,3)==250)){
+                    consoleMailSent(enable_console);                                       
+                }                    
+            });
+  
+});
